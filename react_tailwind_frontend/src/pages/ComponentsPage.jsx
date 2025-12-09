@@ -6,7 +6,8 @@ import Card from "../components/ui/Card";
 
 /**
  * PUBLIC_INTERFACE
- * ComponentsPage lists basic UI components with previews and code tabs.
+ * ComponentsPage lists basic UI components with previews and code tabs,
+ * and now provides Tailwind Play–ready HTML in addition to JSX to power SnippetPlay.
  */
 const ComponentsPage = () => {
   return (
@@ -31,12 +32,19 @@ const ComponentsPage = () => {
             </div>
           }
           code={{
+            // Existing JSX (preserved)
             jsx: `<div className="flex gap-3">
   <button className="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium bg-ocean-primary text-white hover:brightness-110">Primary</button>
   <button className="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium bg-ocean-secondary text-white hover:brightness-110">Secondary</button>
   <button className="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium bg-white text-gray-700 border border-gray-300 hover:bg-gray-50">Outline</button>
 </div>`,
             css: `/* Uses Tailwind classes; customize via tailwind.config.js colors */`,
+            // New Tailwind Play HTML fragment
+            html: `<div class="flex gap-3">
+  <button class="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium bg-blue-600 text-white hover:brightness-110">Primary</button>
+  <button class="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium bg-amber-500 text-white hover:brightness-110">Secondary</button>
+  <button class="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium bg-white text-gray-700 border border-gray-300 hover:bg-gray-50">Outline</button>
+</div>`,
           }}
         />
 
@@ -58,6 +66,11 @@ const ComponentsPage = () => {
   <div className="rounded-lg border p-3 bg-red-50 text-red-800 border-red-200">Error! Something went wrong.</div>
 </div>`,
             css: `/* Tailwind utility classes for background, text, and border colors */`,
+            html: `<div class="space-y-3">
+  <div class="rounded-lg border p-3 bg-blue-50 text-blue-800 border-blue-200">Heads up! This is an informational alert.</div>
+  <div class="rounded-lg border p-3 bg-amber-50 text-amber-800 border-amber-200">Success! Your changes have been saved.</div>
+  <div class="rounded-lg border p-3 bg-red-50 text-red-800 border-red-200">Error! Something went wrong.</div>
+</div>`,
           }}
         />
 
@@ -86,6 +99,17 @@ const ComponentsPage = () => {
   </div>
 </div>`,
             css: `/* Shadow and rounded are Tailwind utilities. Adjust in tailwind.config.js if needed. */`,
+            html: `<div class="bg-white border border-gray-200 rounded-xl shadow">
+  <div class="px-4 py-3 border-b border-gray-200">
+    <h4 class="text-sm font-semibold text-gray-900">Card Title</h4>
+  </div>
+  <div class="p-4 text-sm text-gray-700">
+    This is a basic card using the Ocean Professional theme.
+  </div>
+  <div class="px-4 py-3 border-t border-gray-200">
+    <button class="text-blue-600 text-sm">Action</button>
+  </div>
+</div>`,
           }}
         />
       </div>
