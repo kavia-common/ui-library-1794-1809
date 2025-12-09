@@ -3,6 +3,8 @@ import PreviewCard from "../components/PreviewCard";
 import Button from "../components/ui/Button";
 import Alert from "../components/ui/Alert";
 import Card from "../components/ui/Card";
+import { Link } from "react-router-dom";
+import { COMPONENTS } from "../data/libraryData";
 
 /**
  * PUBLIC_INTERFACE
@@ -79,6 +81,32 @@ const ComponentsPage = () => {
           Building blocks styled with the Ocean Professional theme.
         </p>
       </header>
+
+      {/* Quick list that navigates to detail pages */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+        {COMPONENTS.map((c) => (
+          <Link
+            key={c.slug}
+            to={`/components/${c.slug}`}
+            className="group bg-white border border-gray-200 rounded-xl p-4 hover:bg-gray-50 transition flex items-center justify-between"
+          >
+            <div>
+              <div className="text-sm font-semibold text-gray-900">{c.title}</div>
+              {c.description && (
+                <div className="text-sm text-gray-600 mt-1 line-clamp-2">{c.description}</div>
+              )}
+            </div>
+            <svg
+              className="w-6 h-6 text-gray-400 group-hover:text-ocean-primary transition"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
+        ))}
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Representative: uses the exact provided Tailwind HTML snippet in the code block */}

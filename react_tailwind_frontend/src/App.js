@@ -11,6 +11,7 @@ import "./App.css";
 // Basic components and pages
 import ComponentsPage from "./pages/ComponentsPage";
 import BlocksPage from "./pages/BlocksPage";
+import DetailPage from "./pages/DetailPage";
 
 // PUBLIC_INTERFACE
 function App() {
@@ -149,8 +150,9 @@ function App() {
               <Routes>
                 <Route path="/" element={<Navigate to="/components" replace />} />
                 <Route path="/components" element={<ComponentsPage />} />
+                <Route path="/components/:slug" element={<DetailPage />} />
                 <Route path="/blocks" element={<BlocksPage />} />
-
+                <Route path="/blocks/:slug" element={<DetailPage />} />
               </Routes>
             </div>
           </main>
