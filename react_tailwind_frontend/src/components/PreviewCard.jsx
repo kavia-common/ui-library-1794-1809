@@ -1,28 +1,109 @@
-import React from "react";
-import CodeTabs from "./CodeTabs";
-import SnippetPlay from "./SnippetPlay";
+import React, { useMemo, useState, useCallback } from "react";
 
 /**
  * PUBLIC_INTERFACE
- * PreviewCard shows a live preview area and a Tailwind Play–style snippet viewer under it.
- * It maps existing `code` objects to SnippetPlay tabs: prefers `html/js/config`; falls back to JSX-only via HTML.
+ * PreviewCard shows a live preview area and a Tailwind Play–style snippet code area under it.
+ * It maps existing `code` objects to Tailwind Play–ready tabs (HTML / JS / Config) and renders only
+ * the code block controls matching the SnippetPlay implementation—without introducing any new preview panes or routes.
  */
 const PreviewCard = ({ title, description, preview, code }) => {
-  // Map existing code object to SnippetPlay props:
-  // - If `code.html` provided, use as-is; else if `code.jsx` exists, wrap it as an HTML fragment for Tailwind Play.
-  // - `code.js` or `code.javascript` maps to js; `code.config` maps to config (string or object literal).
-  const html =
-    (code && (code.html || code.markup)) ||
-    (code && code.jsx
-      ? `<div class="p-4">${code.jsx
-          .replaceAll('className="', 'class="')
-          .replaceAll("className='", "class='")}</div>`
-      : "");
+  // Build Tailwind Play–ready code tabs in-place. If only JSX is provided, convert it to HTML.
+  const html = useMemo(() => {
+    if (!code) return "";
+    if (code.html || code.markup) return code.html || code.markup;
+    if (code.jsx) {
+      // Minimal JSX -> HTML transform for className
+      return code.jsx
+        .replaceAll('className="', 'class="')
+        .replaceAll("className='", "class='");
+    }
+    return "";
+  }, [code]);
 
-  const js = (code && (code.js || code.javascript)) || "";
-  const config = (code && (code.config || code.tailwind || "")) || "";
+  const js = useMemo(() => (code && (code.js || code.javascript)) || "", [code]);
+  const config = useMemo(() => (code && (code.config || code.tailwind)) || "", [code]);
 
-  const hasAnyPlayContent = Boolean(html || js || config);
+  const tabs = useMemo(() => {
+    const t = [];
+    if (html) t.push({ key: "html", label: "HTML" });
+    if (js) t.push({ key: "js", label: "JS" });
+    if (config) t.push({ key: "config", label: "Config" });
+    return t.length ? t : [{ key: "html", label: "HTML" }];
+  }, [html, js, config]);
+
+  const [active, setActive] = useState(tabs[0]?.key || "html");
+
+  // Keep accessibility/keyboard focus behavior consistent with SnippetPlay's copy handling
+  const [copied, setCopied] = useState(false);
+  const copy = useCallback(async (text) => {
+    try {
+      await navigator.clipboard.writeText(text ?? "");
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1200);
+      return true;
+    } catch {
+      return false;
+    }
+  }, []);
+
+  const currentCode = useMemo(() => {
+    if (active === "html") return html || "";
+    if (active === "js") return js || "";
+    if (active === "config") return config || "";
+    return "";
+  }, [active, html, js, config]);
+
+  const codeLines = useMemo(
+    () => (currentCode ? currentCode.split("\n") : [""]),
+    [currentCode]
+  );
+
+  // Simple syntax highlighting similar to SnippetPlay (same token classes)
+  const highlight = useCallback((codeText = "", lang = "html") => {
+    if (!codeText) return "";
+    const esc = codeText
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;");
+    let out = esc.replace(/(\/\*[\s\S]*?\*\/|\/\/[^\n]*|<!--[\s\S]*?-->)/g, (m) => {
+      return `<span class="syntax-comment">${m}</span>`;
+    });
+    if (lang === "html") {
+      out = out
+        .replace(/([a-zA-Z-:]+)(=)(&quot;[^&]*&quot;|&apos;[^&]*&apos;|&quot;&quot;|&apos;&apos;)/g, (_m, k, eq, v) => {
+          return `<span class="syntax-attr">${k}</span>${eq}<span class="syntax-string">${v}</span>`;
+        })
+        .replace(/(&lt;\/?)([a-zA-Z0-9-:]+)/g, (_m, a1, a2) => {
+          return `<span class="syntax-tag">${a1}</span><span class="syntax-keyword">${a2}</span>`;
+        })
+        .replace(/(\/?&gt;)/g, `<span class="syntax-tag">$1</span>`);
+    } else if (lang === "js") {
+      out = out.replace(/([`'"])(?:\\.|(?!\1).)*\1/g, (m) => `<span class="syntax-string">${m}</span>`);
+      out = out.replace(
+        /\b(true|false|null|undefined|NaN|Infinity|(?:0x)?\d+(?:\.\d+)?)\b/g,
+        `<span class="syntax-number">$1</span>`
+      );
+      out = out.replace(
+        /\b(const|let|var|return|function|if|else|for|while|class|new|import|from|export|default|try|catch|finally|await|async|switch|case|break|continue|throw)\b/g,
+        `<span class="syntax-keyword">$1</span>`
+      );
+    } else {
+      out = out.replace(/([`'"])(?:\\.|(?!\1).)*\1/g, (m) => `<span class="syntax-string">${m}</span>`);
+      out = out.replace(
+        /\b(true|false|null|undefined|NaN|Infinity|(?:0x)?\d+(?:\.\d+)?)\b/g,
+        `<span class="syntax-number">$1</span>`
+      );
+    }
+    return out;
+  }, []);
+
+  const codeLang = active === "js" ? "js" : active === "config" ? "json" : "html";
+  const highlighted = useMemo(() => highlight(currentCode, codeLang), [currentCode, codeLang, highlight]);
+
+  const onCopy = useCallback(() => {
+    // Copy exactly current tab content; users can paste directly into Tailwind Play tabs.
+    return copy(currentCode || "");
+  }, [currentCode, copy]);
 
   return (
     <section className="bg-white rounded-xl shadow-card border border-gray-200 overflow-hidden">
@@ -40,16 +121,86 @@ const PreviewCard = ({ title, description, preview, code }) => {
           </div>
         </div>
       </div>
+
+      {/* Tailwind Play–style code block only (no extra preview added) */}
       <div className="border-t border-gray-200">
-        {hasAnyPlayContent ? (
-          <div className="p-4 sm:p-6">
-            <SnippetPlay title={`${title} Snippet`} html={html} js={js} config={config} copyMode="fragment" />
+        <div className="rounded-none overflow-hidden border-t border-slate-800/70" style={{ background: "var(--bg-canvas, #0f131a)" }}>
+          {/* Header with tabs and copy; mirrors SnippetPlay controls */}
+          <div
+            className="flex items-center justify-between px-3 md:px-4 h-11 border-b border-slate-800/70"
+            role="tablist"
+            aria-label={`${title} snippet tabs`}
+          >
+            <div className="flex items-center gap-2 md:gap-3">
+              {tabs.map((t) => {
+                const activeState = active === t.key;
+                return (
+                  <button
+                    key={t.key}
+                    id={`tab-${t.key}`}
+                    role="tab"
+                    aria-selected={activeState}
+                    aria-controls={`tab-${t.key}-panel`}
+                    data-active={activeState}
+                    onClick={() => setActive(t.key)}
+                    className="h-10 px-3 text-[12px] md:text-xs tracking-wider uppercase font-medium 
+                    text-slate-400 hover:text-slate-200 transition
+                    data-[active=true]:text-sky-300
+                    data-[active=true]:border-b-2 data-[active=true]:border-sky-400"
+                  >
+                    {t.label}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={onCopy}
+                aria-label="Copy code"
+                className="inline-flex items-center gap-1.5 text-slate-400 hover:text-slate-200 px-2.5 py-1.5 rounded-md ring-1 ring-slate-700/50 hover:ring-slate-600 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/60"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="shrink-0">
+                  <path d="M8 8h12v12H8z" stroke="currentColor" strokeWidth="1.5" />
+                  <path d="M4 4h12v12H4z" stroke="currentColor" strokeWidth="1.5" />
+                </svg>
+                <span className="hidden sm:inline">{copied ? "Copied" : "Copy"}</span>
+              </button>
+            </div>
           </div>
-        ) : (
-          // Fallback to CodeTabs when we truly only have a code object with tabs that don't map to Tailwind Play inputs.
-          <CodeTabs code={code} />
-        )}
+
+          {/* Code area with gutter and syntax colors */}
+          <div className="relative overflow-auto">
+            <div className="grid" role="tabpanel" id={`tab-${active}-panel`} aria-labelledby={`tab-${active}`}>
+              <pre className="relative text-[13px] md:text-[13.5px] leading-6 p-3 md:p-4 lg:p-5 m-0 code-font">
+                <div className="flex">
+                  {/* Gutter */}
+                  <div className="select-none text-right pr-3 mr-3 w-10 border-r border-slate-800/60 text-slate-600">
+                    {codeLines.map((_, i) => (
+                      <div key={i}>{i + 1}</div>
+                    ))}
+                  </div>
+                  {/* Code */}
+                  <code
+                    className="block min-w-0 whitespace-pre text-slate-300"
+                    dangerouslySetInnerHTML={{ __html: highlighted }}
+                  />
+                </div>
+              </pre>
+            </div>
+          </div>
+        </div>
       </div>
+
+      {/* Local styles for syntax colors to match Ocean Professional theme */}
+      <style>{`
+        .syntax-keyword { color: var(--syntax-keyword, #38bdf8); }
+        .syntax-string { color: var(--syntax-string, #34d399); }
+        .syntax-attr { color: var(--syntax-attr, #a5b4fc); }
+        .syntax-number { color: var(--syntax-number, #fbbf24); }
+        .syntax-comment { color: var(--syntax-comment, #6b7280); font-style: italic; }
+        .syntax-tag { color: var(--text-secondary, #9ca3af); }
+      `}</style>
     </section>
   );
 };
