@@ -1,8 +1,6 @@
 import React from "react";
 import PreviewCard from "../components/PreviewCard";
 import Button from "../components/ui/Button";
-import { Link } from "react-router-dom";
-import { BLOCKS } from "../data/libraryData";
 
 /**
  * PUBLIC_INTERFACE
@@ -57,34 +55,8 @@ const BlocksPage = () => {
   };
 
   return (
-    // Remove the top header/intro band and keep spacing tidy
     <div className="space-y-6">
-      {/* Quick list that navigates to block detail pages */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
-        {BLOCKS.map((b) => (
-          <Link
-            key={b.slug}
-            to={`/blocks/${b.slug}`}
-            className="group bg-white border border-gray-200 rounded-xl p-4 hover:bg-gray-50 transition flex items-center justify-between"
-          >
-            <div>
-              <div className="text-sm font-semibold text-gray-900">{b.title}</div>
-              {b.description && (
-                <div className="text-sm text-gray-600 mt-1 line-clamp-2">{b.description}</div>
-              )}
-            </div>
-            <svg
-              className="w-6 h-6 text-gray-400 group-hover:text-ocean-primary transition"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
-          </Link>
-        ))}
-      </div>
-
+      {/* Keep only the PreviewCard – remove any quick lists or headings above */}
       <div className="grid grid-cols-1 gap-6">
         <PreviewCard
           title="Hero Section"
