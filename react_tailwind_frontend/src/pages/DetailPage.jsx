@@ -36,18 +36,11 @@ const DetailPage = () => {
     switch (item.preview) {
       case "buttons":
         return (
-          <div className="relative overflow-hidden rounded-xl bg-ocean-gradient">
-            <div className="relative px-6 py-10 sm:px-10 sm:py-14">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
-                Build faster with Ocean UI Blocks
-              </h2>
-              <p className="mt-2 text-gray-600 max-w-prose">
-                A curated collection of responsive UI sections built with Tailwind CSS.
-              </p>
-              <div className="mt-5 flex items-center gap-3">
-                <Button>Get Started</Button>
-                <Button variant="outline">Learn More</Button>
-              </div>
+          <div className="p-6">
+            <div className="flex items-center gap-3">
+              <Button>Primary</Button>
+              <Button variant="secondary">Secondary</Button>
+              <Button variant="outline">Outline</Button>
             </div>
           </div>
         );
