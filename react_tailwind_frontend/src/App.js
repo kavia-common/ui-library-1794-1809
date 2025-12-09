@@ -11,6 +11,7 @@ import "./App.css";
 // Basic components and pages
 import ComponentsPage from "./pages/ComponentsPage";
 import BlocksPage from "./pages/BlocksPage";
+import SnippetsPlayground from "./pages/SnippetsPlayground";
 
 // PUBLIC_INTERFACE
 function App() {
@@ -61,6 +62,14 @@ function App() {
                   }
                 >
                   Blocks
+                </NavLink>
+                <NavLink
+                  to="/snippets"
+                  className={({ isActive }) =>
+                    `${navItemClass} ${isActive ? navItemActive : navItemInactive}`
+                  }
+                >
+                  Snippets
                 </NavLink>
                 <a
                   href="https://tailwindcss.com/docs"
@@ -128,6 +137,16 @@ function App() {
                   <span className="h-2 w-2 rounded-full bg-ocean-secondary"></span>
                   Blocks
                 </NavLink>
+                <NavLink
+                  to="/snippets"
+                  className={({ isActive }) =>
+                    `flex items-center gap-2 px-3 py-2 rounded-lg transition ${isActive ? "bg-blue-50 text-ocean-primary" : "text-gray-700 hover:bg-blue-50 hover:text-ocean-primary"}`
+                  }
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <span className="h-2 w-2 rounded-full bg-ocean-primary"></span>
+                  Snippets
+                </NavLink>
               </nav>
 
               <div className="mt-6">
@@ -148,6 +167,7 @@ function App() {
                 <Route path="/" element={<Navigate to="/components" replace />} />
                 <Route path="/components" element={<ComponentsPage />} />
                 <Route path="/blocks" element={<BlocksPage />} />
+                <Route path="/snippets" element={<SnippetsPlayground />} />
               </Routes>
             </div>
           </main>

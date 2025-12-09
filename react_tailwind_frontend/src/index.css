@@ -10,6 +10,20 @@
   --ocean-bg: #f9fafb;
   --ocean-surface: #ffffff;
   --ocean-text: #111827;
+
+  /* Editor canvas tokens from design notes */
+  --bg-canvas: #0f131a;
+  --bg-elevated: #111827;
+  --border-subtle: rgba(51, 65, 85, 0.6);
+  --text-primary: #e5e7eb;
+  --text-secondary: #9ca3af;
+  --syntax-keyword: #38bdf8;
+  --syntax-string: #34d399;
+  --syntax-attr: #a5b4fc;
+  --syntax-number: #fbbf24;
+  --syntax-comment: #6b7280;
+  --accent: #22d3ee;
+  --accent-strong: #38bdf8;
 }
 
 html, body, #root {

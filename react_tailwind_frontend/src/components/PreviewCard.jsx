@@ -4,6 +4,7 @@ import CodeTabs from "./CodeTabs";
 /**
  * PUBLIC_INTERFACE
  * PreviewCard shows a live preview area and a CodeTabs viewer under it.
+ * Note: SnippetPlay is a separate, Tailwind Play–style experience with iframe isolation.
  */
 const PreviewCard = ({ title, description, preview, code }) => {
   return (
