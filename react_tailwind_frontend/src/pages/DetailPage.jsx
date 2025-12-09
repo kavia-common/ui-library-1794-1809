@@ -113,20 +113,6 @@ const DetailPage = () => {
   return (
     <main className="flex-1 min-w-0">
       <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
-        {/* Breadcrumb / Back */}
-        <div className="mb-4 text-sm">
-          <Link to={backHref} className="text-gray-600 hover:text-ocean-primary">
-            ← Back to {normalizedCategory === "blocks" ? "Blocks" : "Components"}
-          </Link>
-        </div>
-
-        <header className="mb-4">
-          <h1 className="text-2xl font-semibold text-gray-900">{item.title}</h1>
-          {item.description && (
-            <p className="text-gray-600 mt-1">{item.description}</p>
-          )}
-        </header>
-
         <div className="grid grid-cols-1 gap-6">
           <PreviewCard
             title={item.title}
