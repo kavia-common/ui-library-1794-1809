@@ -79,9 +79,6 @@ const ComponentsPage = () => {
     <div className="space-y-8">
       <header className="mb-2">
         <h1 className="text-2xl font-semibold text-gray-900">Components</h1>
-        <p className="text-gray-600">
-          Building blocks styled with the Ocean Professional theme.
-        </p>
       </header>
 
       {/* Quick list that navigates to detail pages */}
