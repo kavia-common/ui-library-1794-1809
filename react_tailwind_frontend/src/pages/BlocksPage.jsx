@@ -57,16 +57,10 @@ const BlocksPage = () => {
   };
 
   return (
-    <div className="space-y-8">
-      <header className="mb-2">
-        <h1 className="text-2xl font-semibold text-gray-900">Blocks</h1>
-        <p className="text-gray-600">
-          Higher-level sections ready to drop into your pages.
-        </p>
-      </header>
-
+    // Remove the top header/intro band and keep spacing tidy
+    <div className="space-y-6">
       {/* Quick list that navigates to block detail pages */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
         {BLOCKS.map((b) => (
           <Link
             key={b.slug}
