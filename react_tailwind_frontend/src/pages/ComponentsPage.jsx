@@ -66,7 +66,7 @@ const ComponentsPage = () => {
   return (
     <div className="space-y-6">
       {/* Quick list that navigates to detail pages */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
         {COMPONENTS.map((c) => (
           <Link
             key={c.slug}

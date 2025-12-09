@@ -8,8 +8,8 @@ import { getItem } from "../data/libraryData";
 
 /**
  * PUBLIC_INTERFACE
- * DetailPage renders only the PreviewCard within the main content area.
- * Any page-level headers/intros are removed to prevent duplication with PreviewCard's title/description.
+ * DetailPage renders only the PreviewCard within the main content area (no extra headers).
+ * Spacing/padding is handled by AppShell wrapper; keep local layout minimal to avoid duplicates.
  */
 const DetailPage = () => {
   const { slug } = useParams();
@@ -79,38 +79,31 @@ const DetailPage = () => {
     }
   }, [item]);
 
-  // Not found state
+  // Not found state — keep minimal wrapper to match AppShell padding
   if (!item) {
     return (
-      <main className="flex-1 min-w-0">
-        <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
-          <div className="text-sm text-gray-600">
-            Not found.{" "}
-            <Link
-              to={normalizedCategory === "blocks" ? "/blocks" : "/components"}
-              className="text-ocean-primary underline"
-            >
-              Back to {normalizedCategory}
-            </Link>
-          </div>
-        </div>
-      </main>
+      <div className="text-sm text-gray-600">
+        Not found.{" "}
+        <Link
+          to={normalizedCategory === "blocks" ? "/blocks" : "/components"}
+          className="text-ocean-primary underline"
+        >
+          Back to {normalizedCategory}
+        </Link>
+      </div>
     );
   }
 
+  // Only render PreviewCard; outer spacing provided by AppShell
   return (
-    <main className="flex-1 min-w-0">
-      <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
-        <div className="grid grid-cols-1 gap-6">
-          <PreviewCard
-            title={item.title}
-            description={item.description}
-            preview={previewNode}
-            code={item.code}
-          />
-        </div>
-      </div>
-    </main>
+    <div className="grid grid-cols-1 gap-6">
+      <PreviewCard
+        title={item.title}
+        description={item.description}
+        preview={previewNode}
+        code={item.code}
+      />
+    </div>
   );
 };
 
