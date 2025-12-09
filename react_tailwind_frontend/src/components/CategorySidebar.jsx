@@ -19,21 +19,6 @@ const CategorySidebar = ({ category, onNavigate }) => {
           {category === "blocks" ? "UI Blocks" : "UI Components"}
         </h3>
         <nav className="space-y-1">
-          <NavLink
-            to="/"
-            end
-            className={({ isActive }) =>
-              `block px-3 py-2 rounded-lg transition ${
-                isActive
-                  ? "bg-blue-50 text-ocean-primary"
-                  : "text-gray-700 hover:bg-blue-50 hover:text-ocean-primary"
-              }`
-            }
-            onClick={onNavigate}
-          >
-            Home
-          </NavLink>
-
           {items.map((it) => (
             <NavLink
               key={it.slug}
