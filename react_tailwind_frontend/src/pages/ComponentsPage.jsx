@@ -76,13 +76,9 @@ const ComponentsPage = () => {
   };
 
   return (
-    <div className="space-y-8">
-      <header className="mb-2">
-        <h1 className="text-2xl font-semibold text-gray-900">Components</h1>
-      </header>
-
+    <div className="space-y-6">
       {/* Quick list that navigates to detail pages */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {COMPONENTS.map((c) => (
           <Link
             key={c.slug}
