@@ -9,20 +9,11 @@ import { COMPONENTS } from "../data/libraryData";
 /**
  * PUBLIC_INTERFACE
  * ComponentsPage lists basic UI components with previews and Tailwind Play–ready code tabs.
- * All snippet objects now follow the exact HTML/JS/Config data shape used by Blocks to ensure
- * identical UI and copy behavior across the app.
+ * Keep only the sidebar (provided by AppShell) and the PreviewCards in main content.
+ * Remove any standalone page-level headings/intro duplicates to avoid repeating titles/descriptions.
  */
 const ComponentsPage = () => {
-  /**
-   * Pattern for component snippets:
-   * - Provide code objects shaped like: { html: string, js?: string, config?: string, jsx?: string }
-   * - For exact-copy HTML requirements, set `html` to ONLY the exact fragment the user provided.
-   * - Leave `js` and `config` empty strings unless needed; PreviewCard will still render tabs properly.
-   * - This ensures the Copy action returns exactly the HTML fragment, byte-for-byte.
-   */
-
-  // Representative component updated to exactly match the provided Tailwind HTML snippet.
-  // Buttons snippet remains a single <section>-wrapped fragment to match Blocks style and user intent.
+  // Buttons snippet fragment
   const buttonsSnippet = {
     html: `<section class="p-6">
   <div class="w-full max-w-xl mx-auto">
@@ -38,10 +29,9 @@ const ComponentsPage = () => {
 </section>`,
     js: ``,
     config: ``,
-    jsx: undefined,
   };
 
-  // ALERTS snippet aligned to single <section>-wrapped HTML fragment
+  // Alerts snippet fragment
   const alertsSnippet = {
     html: `<section class="p-6">
   <div class="space-y-3 w-full max-w-xl mx-auto">
@@ -52,10 +42,9 @@ const ComponentsPage = () => {
 </section>`,
     js: ``,
     config: ``,
-    jsx: undefined,
   };
 
-  // CARD snippet aligned to single <section>-wrapped HTML fragment
+  // Card snippet fragment
   const cardSnippet = {
     html: `<section class="p-6">
   <div class="bg-white border border-gray-200 rounded-xl shadow text-gray-900 w-full max-w-xl mx-auto">
@@ -72,7 +61,6 @@ const ComponentsPage = () => {
 </section>`,
     js: ``,
     config: ``,
-    jsx: undefined,
   };
 
   return (
@@ -103,8 +91,8 @@ const ComponentsPage = () => {
         ))}
       </div>
 
+      {/* Keep only PreviewCards below – no extra page-level titles/descriptions */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Representative: uses the exact provided Tailwind HTML snippet in the code block */}
         <PreviewCard
           title="Buttons"
           description="Primary, Secondary, and Outline button variants (Ocean theme)."
@@ -120,7 +108,6 @@ const ComponentsPage = () => {
           code={buttonsSnippet}
         />
 
-        {/* Alerts (kept as before; apply the same exact-fragment pattern when a specific snippet is provided) */}
         <PreviewCard
           title="Alerts"
           description="Informational, Success, and Error alerts."
@@ -134,7 +121,6 @@ const ComponentsPage = () => {
           code={alertsSnippet}
         />
 
-        {/* Card (kept as before; pattern ready to switch to exact HTML when provided) */}
         <PreviewCard
           title="Card"
           description="A simple card with header and footer."

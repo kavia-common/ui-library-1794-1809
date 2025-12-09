@@ -8,23 +8,14 @@ import { getItem } from "../data/libraryData";
 
 /**
  * PUBLIC_INTERFACE
- * DetailPage renders a component/block detail using the shared top nav layout (App).
- * Sidebar is now globally managed by App.js based on route; this page should not render its own sidebar.
- *
- * Route params:
- *  - slug: string
- * Derives category from current pathname segment ("/components/:slug" | "/blocks/:slug").
- *
- * Shows:
- *  - Breadcrumb back to category list
- *  - Title/description
- *  - PreviewCard with Tailwind Play–ready <section> code tabs in place
+ * DetailPage renders only the PreviewCard within the main content area.
+ * Any page-level headers/intros are removed to prevent duplication with PreviewCard's title/description.
  */
 const DetailPage = () => {
   const { slug } = useParams();
   const location = useLocation();
 
-  // Determine category from current path so we don't require a dynamic :category segment
+  // Determine category from current path
   const path = location.pathname || "";
   const normalizedCategory = path.startsWith("/blocks") ? "blocks" : "components";
 
@@ -34,7 +25,6 @@ const DetailPage = () => {
   const previewNode = useMemo(() => {
     if (!item) return null;
 
-    // Simple factory keyed by libraryData.preview
     switch (item.preview) {
       case "buttons":
         return (
@@ -89,7 +79,7 @@ const DetailPage = () => {
     }
   }, [item]);
 
-  // Not found state: keep within main content area; sidebar is handled globally by App.
+  // Not found state
   if (!item) {
     return (
       <main className="flex-1 min-w-0">
@@ -107,8 +97,6 @@ const DetailPage = () => {
       </main>
     );
   }
-
-  const backHref = normalizedCategory === "blocks" ? "/blocks" : "/components";
 
   return (
     <main className="flex-1 min-w-0">
