@@ -20,7 +20,7 @@ const ComponentsPage = () => {
    */
 
   // Representative component updated to exactly match the provided Tailwind HTML snippet.
-  // Buttons snippet now uses the provided <section>…</section> HTML exactly.
+  // Buttons snippet remains a single <section>-wrapped fragment to match Blocks style and user intent.
   const buttonsSnippet = {
     html: `<section class="relative overflow-hidden rounded-xl bg-gradient-to-br from-blue-500/10 to-gray-50">
   <div class="relative px-6 py-10 sm:px-10 sm:py-14">
@@ -34,81 +34,41 @@ const ComponentsPage = () => {
 </section>`,
     js: ``,
     config: ``,
-    // Optional JSX can remain for internal conversions if ever needed elsewhere.
-    // Not required for exact HTML copy behavior.
     jsx: undefined,
   };
 
-  // ALERTS snippet (kept functional; can be converted to exact-fragment pattern when a new snippet is provided)
+  // ALERTS snippet aligned to single <section>-wrapped HTML fragment
   const alertsSnippet = {
-    html: `<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="https://cdn.tailwindcss.com"></script>
-  </head>
-  <body class="min-h-screen bg-slate-950 text-slate-200 grid place-items-center p-8">
-    <div class="space-y-3 w-full max-w-xl">
-      <div class="rounded-lg border p-3 bg-blue-50 text-blue-800 border-blue-200">Heads up! This is an informational alert.</div>
-      <div class="rounded-lg border p-3 bg-amber-50 text-amber-800 border-amber-200">Success! Your changes have been saved.</div>
-      <div class="rounded-lg border p-3 bg-red-50 text-red-800 border-red-200">Error! Something went wrong.</div>
-    </div>
-  </body>
-</html>`,
+    html: `<section class="p-6">
+  <div class="space-y-3 w-full max-w-xl mx-auto">
+    <div class="rounded-lg border p-3 bg-blue-50 text-blue-800 border-blue-200">Heads up! This is an informational alert.</div>
+    <div class="rounded-lg border p-3 bg-amber-50 text-amber-800 border-amber-200">Success! Your changes have been saved.</div>
+    <div class="rounded-lg border p-3 bg-red-50 text-red-800 border-red-200">Error! Something went wrong.</div>
+  </div>
+</section>`,
     js: ``,
-    config: `{
-  "theme": {
-    "extend": {}
-  }
-}`,
-    jsx: `<div className="space-y-3">
-  <div className="rounded-lg border p-3 bg-blue-50 text-blue-800 border-blue-200">Heads up! This is an informational alert.</div>
-  <div className="rounded-lg border p-3 bg-amber-50 text-amber-800 border-amber-200">Success! Your changes have been saved.</div>
-  <div className="rounded-lg border p-3 bg-red-50 text-red-800 border-red-200">Error! Something went wrong.</div>
-</div>`,
+    config: ``,
+    jsx: undefined,
   };
 
-  // CARD snippet (kept functional; pattern for converting to exact fragment when provided)
+  // CARD snippet aligned to single <section>-wrapped HTML fragment
   const cardSnippet = {
-    html: `<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="https://cdn.tailwindcss.com"></script>
-  </head>
-  <body class="min-h-screen bg-slate-950 text-slate-200 grid place-items-center p-8">
-    <div class="bg-white border border-gray-200 rounded-xl shadow w-full max-w-xl text-gray-900">
-      <div class="px-4 py-3 border-b border-gray-200">
-        <h4 class="text-sm font-semibold">Card Title</h4>
-      </div>
-      <div class="p-4 text-sm text-gray-700">
-        This is a basic card using the Ocean Professional theme.
-      </div>
-      <div class="px-4 py-3 border-t border-gray-200">
-        <button class="text-blue-600 text-sm">Action</button>
-      </div>
+    html: `<section class="p-6">
+  <div class="bg-white border border-gray-200 rounded-xl shadow text-gray-900 w-full max-w-xl mx-auto">
+    <div class="px-4 py-3 border-b border-gray-200">
+      <h4 class="text-sm font-semibold">Card Title</h4>
     </div>
-  </body>
-</html>`,
+    <div class="p-4 text-sm text-gray-700">
+      This is a basic card using the Ocean Professional theme.
+    </div>
+    <div class="px-4 py-3 border-t border-gray-200">
+      <button class="text-blue-600 text-sm">Action</button>
+    </div>
+  </div>
+</section>`,
     js: ``,
-    config: `{
-  "theme": {
-    "extend": {}
-  }
-}`,
-    jsx: `<div className="bg-white border border-gray-200 rounded-xl shadow-soft overflow-hidden">
-  <div className="px-4 py-3 border-b border-gray-200">
-    <h4 className="text-sm font-semibold text-gray-900">Card Title</h4>
-  </div>
-  <div className="p-4 text-sm text-gray-700">
-    This is a basic card using the Ocean Professional theme.
-  </div>
-  <div className="px-4 py-3 border-t border-gray-200">
-    <button className="text-ocean-primary text-sm">Action</button>
-  </div>
-</div>`,
+    config: ``,
+    jsx: undefined,
   };
 
   return (
