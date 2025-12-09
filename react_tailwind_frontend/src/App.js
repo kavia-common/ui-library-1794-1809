@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { BrowserRouter, Routes, Route, NavLink, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, NavLink, useLocation, Navigate } from "react-router-dom";
 import "./tailwind.css";
 import "./App.css";
+import { listItems } from "./data/libraryData";
 
 /**
  * Ocean Professional layout with fixed navbar, collapsible sidebar, and main content area.
@@ -153,7 +154,19 @@ function AppShell() {
           <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
             <Routes>
               <Route path="/" element={<HomePage />} />
-              <Route path="/components" element={<ComponentsPage />} />
+              {/* Redirect /components to the first component detail using central data ordering */}
+              <Route
+                path="/components"
+                element={
+                  (() => {
+                    const first = listItems("components")?.[0];
+                    const firstSlug = first?.slug;
+                    // If no components found, fall back to the listing page gracefully
+                    if (!firstSlug) return <ComponentsPage />;
+                    return <Navigate to={`/components/${firstSlug}`} replace />;
+                  })()
+                }
+              />
               <Route path="/components/:slug" element={<DetailPage />} />
               <Route path="/blocks" element={<BlocksPage />} />
               <Route path="/blocks/:slug" element={<DetailPage />} />
