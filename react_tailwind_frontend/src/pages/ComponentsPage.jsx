@@ -11,67 +11,51 @@ import Card from "../components/ui/Card";
  * identical UI and copy behavior across the app.
  */
 const ComponentsPage = () => {
-  // Tailwind Play–ready boilerplate helpers for parity in HTML snippets
-  const playDocStart = `<!doctype html>
+  /**
+   * Pattern for component snippets:
+   * - Provide code objects shaped like: { html: string, js?: string, config?: string, jsx?: string }
+   * - For exact-copy HTML requirements, set `html` to ONLY the exact fragment the user provided.
+   * - Leave `js` and `config` empty strings unless needed; PreviewCard will still render tabs properly.
+   * - This ensures the Copy action returns exactly the HTML fragment, byte-for-byte.
+   */
+
+  // Representative component updated to exactly match the provided Tailwind HTML snippet.
+  // Buttons snippet now uses the provided <section>…</section> HTML exactly.
+  const buttonsSnippet = {
+    html: `<section class="relative overflow-hidden rounded-xl bg-gradient-to-br from-blue-500/10 to-gray-50">
+  <div class="relative px-6 py-10 sm:px-10 sm:py-14">
+    <h2 class="text-3xl font-bold text-gray-900">Build faster with Ocean UI Blocks</h2>
+    <p class="mt-2 text-gray-600">A curated collection of responsive UI sections built with Tailwind CSS.</p>
+    <div class="mt-5 flex items-center gap-3">
+      <a href="#" class="rounded-lg px-4 py-2 text-sm font-medium bg-blue-600 text-white shadow">Get Started</a>
+      <a href="#" class="rounded-lg px-4 py-2 text-sm font-medium border border-gray-300 bg-white text-gray-700">Learn More</a>
+    </div>
+  </div>
+</section>`,
+    js: ``,
+    config: ``,
+    // Optional JSX can remain for internal conversions if ever needed elsewhere.
+    // Not required for exact HTML copy behavior.
+    jsx: undefined,
+  };
+
+  // ALERTS snippet (kept functional; can be converted to exact-fragment pattern when a new snippet is provided)
+  const alertsSnippet = {
+    html: `<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      try {
-        tailwind.config = {
-          theme: { extend: {} }
-        }
-      } catch(e) {
-        console.warn("Invalid Tailwind config in snippet.", e)
-      }
-    </script>
   </head>
-  <body class="min-h-screen bg-slate-950 text-slate-200 grid place-items-center p-8">`;
-
-  const playDocEnd = `
-  </body>
-</html>`;
-
-  // BUTTONS snippet: supply HTML (Play ready), optional JS/Config empty for parity
-  const buttonsSnippet = {
-    html:
-      playDocStart +
-      `
-    <div class="flex gap-3">
-      <button class="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium bg-blue-600 text-white hover:brightness-110">Primary</button>
-      <button class="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium bg-amber-500 text-white hover:brightness-110">Secondary</button>
-      <button class="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium bg-white text-gray-700 border border-gray-300 hover:bg-gray-50">Outline</button>
-    </div>
-` +
-      playDocEnd,
-    js: ``,
-    config: `{
-  "theme": {
-    "extend": {}
-  }
-}`,
-    // Keep JSX for internal conversion to HTML if needed by PreviewCard
-    jsx: `<div className="flex gap-3">
-  <button className="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium bg-ocean-primary text-white hover:brightness-110">Primary</button>
-  <button className="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium bg-ocean-secondary text-white hover:brightness-110">Secondary</button>
-  <button className="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium bg-white text-gray-700 border border-gray-300 hover:bg-gray-50">Outline</button>
-</div>`,
-  };
-
-  // ALERTS snippet
-  const alertsSnippet = {
-    html:
-      playDocStart +
-      `
+  <body class="min-h-screen bg-slate-950 text-slate-200 grid place-items-center p-8">
     <div class="space-y-3 w-full max-w-xl">
       <div class="rounded-lg border p-3 bg-blue-50 text-blue-800 border-blue-200">Heads up! This is an informational alert.</div>
       <div class="rounded-lg border p-3 bg-amber-50 text-amber-800 border-amber-200">Success! Your changes have been saved.</div>
       <div class="rounded-lg border p-3 bg-red-50 text-red-800 border-red-200">Error! Something went wrong.</div>
     </div>
-` +
-      playDocEnd,
+  </body>
+</html>`,
     js: ``,
     config: `{
   "theme": {
@@ -85,11 +69,16 @@ const ComponentsPage = () => {
 </div>`,
   };
 
-  // CARD snippet
+  // CARD snippet (kept functional; pattern for converting to exact fragment when provided)
   const cardSnippet = {
-    html:
-      playDocStart +
-      `
+    html: `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="min-h-screen bg-slate-950 text-slate-200 grid place-items-center p-8">
     <div class="bg-white border border-gray-200 rounded-xl shadow w-full max-w-xl text-gray-900">
       <div class="px-4 py-3 border-b border-gray-200">
         <h4 class="text-sm font-semibold">Card Title</h4>
@@ -101,8 +90,8 @@ const ComponentsPage = () => {
         <button class="text-blue-600 text-sm">Action</button>
       </div>
     </div>
-` +
-      playDocEnd,
+  </body>
+</html>`,
     js: ``,
     config: `{
   "theme": {
@@ -132,21 +121,30 @@ const ComponentsPage = () => {
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Buttons */}
+        {/* Representative: uses the exact provided Tailwind HTML snippet in the code block */}
         <PreviewCard
           title="Buttons"
-          description="Primary, Secondary, and Outline buttons."
+          description="Updated to use the exact Tailwind HTML snippet in the code tabs."
           preview={
-            <div className="flex flex-wrap items-center gap-3">
-              <Button>Primary</Button>
-              <Button variant="secondary">Secondary</Button>
-              <Button variant="outline">Outline</Button>
+            <div className="relative overflow-hidden rounded-xl bg-ocean-gradient">
+              <div className="relative px-6 py-10 sm:px-10 sm:py-14">
+                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                  Build faster with Ocean UI Blocks
+                </h2>
+                <p className="mt-2 text-gray-600 max-w-prose">
+                  A curated collection of responsive UI sections built with Tailwind CSS.
+                </p>
+                <div className="mt-5 flex items-center gap-3">
+                  <Button>Get Started</Button>
+                  <Button variant="outline">Learn More</Button>
+                </div>
+              </div>
             </div>
           }
           code={buttonsSnippet}
         />
 
-        {/* Alerts */}
+        {/* Alerts (kept as before; apply the same exact-fragment pattern when a specific snippet is provided) */}
         <PreviewCard
           title="Alerts"
           description="Informational, Success, and Error alerts."
@@ -160,7 +158,7 @@ const ComponentsPage = () => {
           code={alertsSnippet}
         />
 
-        {/* Cards */}
+        {/* Card (kept as before; pattern ready to switch to exact HTML when provided) */}
         <PreviewCard
           title="Card"
           description="A simple card with header and footer."
