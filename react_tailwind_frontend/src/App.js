@@ -1,14 +1,15 @@
 import React, { useState } from "react";
-import { BrowserRouter, Routes, Route, NavLink, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, NavLink } from "react-router-dom";
 import "./tailwind.css";
 import "./App.css";
 
 /**
  * Ocean Professional layout with fixed navbar, collapsible sidebar, and main content area.
- * Includes routes for Components and Blocks pages.
+ * Includes routes for Home, Components, and Blocks pages.
  */
 
 // Basic components and pages
+import HomePage from "./pages/HomePage";
 import ComponentsPage from "./pages/ComponentsPage";
 import BlocksPage from "./pages/BlocksPage";
 import DetailPage from "./pages/DetailPage";
@@ -22,10 +23,8 @@ function App() {
 
   const navItemClass =
     "px-3 py-2 rounded-md text-sm font-medium transition-colors";
-  const navItemActive =
-    "bg-blue-50 text-ocean-primary";
-  const navItemInactive =
-    "text-gray-600 hover:text-ocean-primary hover:bg-blue-50";
+  const navItemActive = "bg-blue-50 text-ocean-primary";
+  const navItemInactive = "text-gray-600 hover:text-ocean-primary hover:bg-blue-50";
 
   return (
     <BrowserRouter>
@@ -47,6 +46,15 @@ function App() {
 
               {/* Desktop nav */}
               <div className="hidden md:flex items-center gap-2">
+                <NavLink
+                  to="/"
+                  end
+                  className={({ isActive }) =>
+                    `${navItemClass} ${isActive ? navItemActive : navItemInactive}`
+                  }
+                >
+                  Home
+                </NavLink>
                 <NavLink
                   to="/components"
                   className={({ isActive }) =>
@@ -111,9 +119,28 @@ function App() {
               </h3>
               <nav className="space-y-1">
                 <NavLink
+                  to="/"
+                  end
+                  className={({ isActive }) =>
+                    `flex items-center gap-2 px-3 py-2 rounded-lg transition ${
+                      isActive
+                        ? "bg-blue-50 text-ocean-primary"
+                        : "text-gray-700 hover:bg-blue-50 hover:text-ocean-primary"
+                    }`
+                  }
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <span className="h-2 w-2 rounded-full bg-ocean-primary"></span>
+                  Home
+                </NavLink>
+                <NavLink
                   to="/components"
                   className={({ isActive }) =>
-                    `flex items-center gap-2 px-3 py-2 rounded-lg transition ${isActive ? "bg-blue-50 text-ocean-primary" : "text-gray-700 hover:bg-blue-50 hover:text-ocean-primary"}`
+                    `flex items-center gap-2 px-3 py-2 rounded-lg transition ${
+                      isActive
+                        ? "bg-blue-50 text-ocean-primary"
+                        : "text-gray-700 hover:bg-blue-50 hover:text-ocean-primary"
+                    }`
                   }
                   onClick={() => setSidebarOpen(false)}
                 >
@@ -123,14 +150,17 @@ function App() {
                 <NavLink
                   to="/blocks"
                   className={({ isActive }) =>
-                    `flex items-center gap-2 px-3 py-2 rounded-lg transition ${isActive ? "bg-blue-50 text-ocean-primary" : "text-gray-700 hover:bg-blue-50 hover:text-ocean-primary"}`
+                    `flex items-center gap-2 px-3 py-2 rounded-lg transition ${
+                      isActive
+                        ? "bg-blue-50 text-ocean-primary"
+                        : "text-gray-700 hover:bg-blue-50 hover:text-ocean-primary"
+                    }`
                   }
                   onClick={() => setSidebarOpen(false)}
                 >
                   <span className="h-2 w-2 rounded-full bg-ocean-secondary"></span>
                   Blocks
                 </NavLink>
-
               </nav>
 
               <div className="mt-6">
@@ -148,7 +178,7 @@ function App() {
           <main className="flex-1 min-w-0">
             <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
               <Routes>
-                <Route path="/" element={<Navigate to="/components" replace />} />
+                <Route path="/" element={<HomePage />} />
                 <Route path="/components" element={<ComponentsPage />} />
                 <Route path="/components/:slug" element={<DetailPage />} />
                 <Route path="/blocks" element={<BlocksPage />} />

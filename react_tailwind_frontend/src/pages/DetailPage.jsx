@@ -13,8 +13,8 @@ import { getItem } from "../data/libraryData";
  * with a category-aware sidebar on the left for in-category navigation.
  *
  * Route params:
- *  - category: 'components' | 'blocks'
  *  - slug: string
+ * Derives category from current pathname segment ("/components/:slug" | "/blocks/:slug").
  *
  * Shows:
  *  - Breadcrumb back to category list
@@ -22,9 +22,12 @@ import { getItem } from "../data/libraryData";
  *  - PreviewCard with Tailwind Play–ready <section> code tabs in place
  */
 const DetailPage = () => {
-  const { category, slug } = useParams();
+  const { slug } = useParams();
   const location = useLocation();
-  const normalizedCategory = category === "blocks" ? "blocks" : "components";
+
+  // Determine category from current path so we don't require a dynamic :category segment
+  const path = location.pathname || "";
+  const normalizedCategory = path.startsWith("/blocks") ? "blocks" : "components";
 
   const item = getItem(normalizedCategory, slug);
 
