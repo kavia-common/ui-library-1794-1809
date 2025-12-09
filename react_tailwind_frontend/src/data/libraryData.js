@@ -4,7 +4,7 @@ export const COMPONENTS = [
     title: "Buttons",
     description: "Primary, Secondary, and Outline button variants (Ocean theme).",
     code: {
-      // Tailwind Play–ready single <section> block containing the three buttons
+      // Tailwind Play–ready single <section> block containing Primary, Secondary, Outline (Ocean theme)
       html: `<section class="p-6">
   <div class="w-full max-w-xl mx-auto">
     <div class="flex items-center gap-3">

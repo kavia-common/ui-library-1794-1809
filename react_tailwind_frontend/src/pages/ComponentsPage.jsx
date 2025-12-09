@@ -24,13 +24,15 @@ const ComponentsPage = () => {
   // Representative component updated to exactly match the provided Tailwind HTML snippet.
   // Buttons snippet remains a single <section>-wrapped fragment to match Blocks style and user intent.
   const buttonsSnippet = {
-    html: `<section class="relative overflow-hidden rounded-xl bg-gradient-to-br from-blue-500/10 to-gray-50">
-  <div class="relative px-6 py-10 sm:px-10 sm:py-14">
-    <h2 class="text-3xl font-bold text-gray-900">Build faster with Ocean UI Blocks</h2>
-    <p class="mt-2 text-gray-600">A curated collection of responsive UI sections built with Tailwind CSS.</p>
-    <div class="mt-5 flex items-center gap-3">
-      <a href="#" class="rounded-lg px-4 py-2 text-sm font-medium bg-blue-600 text-white shadow">Get Started</a>
-      <a href="#" class="rounded-lg px-4 py-2 text-sm font-medium border border-gray-300 bg-white text-gray-700">Learn More</a>
+    html: `<section class="p-6">
+  <div class="w-full max-w-xl mx-auto">
+    <div class="flex items-center gap-3">
+      <!-- Primary -->
+      <a href="#" class="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium bg-[#2563EB] text-white shadow hover:brightness-110 focus:ring-2 focus:ring-blue-300">Primary</a>
+      <!-- Secondary -->
+      <a href="#" class="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium bg-[#F59E0B] text-white shadow hover:brightness-110 focus:ring-2 focus:ring-amber-300">Secondary</a>
+      <!-- Outline -->
+      <a href="#" class="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 focus:ring-2 focus:ring-blue-200">Outline</a>
     </div>
   </div>
 </section>`,
