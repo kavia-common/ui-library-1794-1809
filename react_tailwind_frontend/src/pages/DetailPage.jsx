@@ -75,7 +75,13 @@ const DetailPage = () => {
           </div>
         );
       default:
-        return null;
+        // Placeholder preview for items without a custom React preview.
+        // We still provide Tailwind Play–ready snippet via item.code so "Code" and copy works.
+        return (
+          <div className="rounded-lg border border-dashed border-gray-300 p-6 text-sm text-gray-600">
+            Live preview coming soon for “{item.title}”. Use the Code tab to copy an editable Tailwind Play–ready snippet.
+          </div>
+        );
     }
   }, [item]);
 
