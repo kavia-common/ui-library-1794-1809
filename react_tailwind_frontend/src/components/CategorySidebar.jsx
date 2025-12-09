@@ -5,14 +5,15 @@ import { listItems } from "../data/libraryData";
 /**
  * PUBLIC_INTERFACE
  * CategorySidebar renders a vertical list of items for a given category ('components' | 'blocks'),
- * highlighting the active item and linking to its slug route, while keeping within the detail layout.
+ * highlighting the active item and linking to its slug route.
+ * Note: Layout container (width/positioning) is controlled by AppShell; this aside only styles inner content.
  */
 const CategorySidebar = ({ category, onNavigate }) => {
   const items = listItems(category);
   const basePath = category === "blocks" ? "/blocks" : "/components";
 
   return (
-    <aside className="w-64 shrink-0 border-r border-gray-200 bg-white h-full">
+    <aside className="h-full bg-white">
       <div className="p-4">
         <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
           {category === "blocks" ? "UI Blocks" : "UI Components"}

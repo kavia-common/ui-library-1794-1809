@@ -132,9 +132,9 @@ function AppShell() {
 
       {/* Content wrapper with optional sidebar */}
       <div className="flex flex-1 pt-16">
-        {/* Sidebar: render only when show is true.
-            Use CategorySidebar to list either components or blocks from central data,
-            so it highlights the active item automatically on detail routes. */}
+        {/* Sidebar: centralized here only when `show` is true.
+            Do not render page-level sidebars. CategorySidebar receives category based on route
+            and will highlight active detail items automatically via NavLink. */}
         {show && (
           <div
             className={`fixed md:sticky top-16 z-30 h-[calc(100vh-4rem)] w-72 shrink-0 overflow-y-auto bg-white border-r border-gray-200 transition-transform duration-300 ease-in-out md:translate-x-0 ${

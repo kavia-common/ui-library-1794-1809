@@ -4,13 +4,12 @@ import PreviewCard from "../components/PreviewCard";
 import Button from "../components/ui/Button";
 import Alert from "../components/ui/Alert";
 import Card from "../components/ui/Card";
-import CategorySidebar from "../components/CategorySidebar";
 import { getItem } from "../data/libraryData";
 
 /**
  * PUBLIC_INTERFACE
- * DetailPage renders a component/block detail using the shared top nav layout (App) but
- * with a category-aware sidebar on the left for in-category navigation.
+ * DetailPage renders a component/block detail using the shared top nav layout (App).
+ * Sidebar is now globally managed by App.js based on route; this page should not render its own sidebar.
  *
  * Route params:
  *  - slug: string
@@ -90,59 +89,54 @@ const DetailPage = () => {
     }
   }, [item]);
 
+  // Not found state: keep within main content area; sidebar is handled globally by App.
   if (!item) {
     return (
-      <div className="flex">
-        <CategorySidebar category={normalizedCategory} />
-        <main className="flex-1 min-w-0">
-          <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
-            <div className="text-sm text-gray-600">
-              Not found.{" "}
-              <Link
-                to={normalizedCategory === "blocks" ? "/blocks" : "/components"}
-                className="text-ocean-primary underline"
-              >
-                Back to {normalizedCategory}
-              </Link>
-            </div>
+      <main className="flex-1 min-w-0">
+        <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
+          <div className="text-sm text-gray-600">
+            Not found.{" "}
+            <Link
+              to={normalizedCategory === "blocks" ? "/blocks" : "/components"}
+              className="text-ocean-primary underline"
+            >
+              Back to {normalizedCategory}
+            </Link>
           </div>
-        </main>
-      </div>
+        </div>
+      </main>
     );
   }
 
   const backHref = normalizedCategory === "blocks" ? "/blocks" : "/components";
 
   return (
-    <div className="flex">
-      <CategorySidebar category={normalizedCategory} />
-      <main className="flex-1 min-w-0">
-        <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
-          {/* Breadcrumb / Back */}
-          <div className="mb-4 text-sm">
-            <Link to={backHref} className="text-gray-600 hover:text-ocean-primary">
-              ← Back to {normalizedCategory === "blocks" ? "Blocks" : "Components"}
-            </Link>
-          </div>
-
-          <header className="mb-4">
-            <h1 className="text-2xl font-semibold text-gray-900">{item.title}</h1>
-            {item.description && (
-              <p className="text-gray-600 mt-1">{item.description}</p>
-            )}
-          </header>
-
-          <div className="grid grid-cols-1 gap-6">
-            <PreviewCard
-              title={item.title}
-              description={item.description}
-              preview={previewNode}
-              code={item.code}
-            />
-          </div>
+    <main className="flex-1 min-w-0">
+      <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
+        {/* Breadcrumb / Back */}
+        <div className="mb-4 text-sm">
+          <Link to={backHref} className="text-gray-600 hover:text-ocean-primary">
+            ← Back to {normalizedCategory === "blocks" ? "Blocks" : "Components"}
+          </Link>
         </div>
-      </main>
-    </div>
+
+        <header className="mb-4">
+          <h1 className="text-2xl font-semibold text-gray-900">{item.title}</h1>
+          {item.description && (
+            <p className="text-gray-600 mt-1">{item.description}</p>
+          )}
+        </header>
+
+        <div className="grid grid-cols-1 gap-6">
+          <PreviewCard
+            title={item.title}
+            description={item.description}
+            preview={previewNode}
+            code={item.code}
+          />
+        </div>
+      </div>
+    </main>
   );
 };
 
