@@ -12,7 +12,7 @@ const CategorySidebar = ({ category, onNavigate }) => {
   const basePath = category === "blocks" ? "/blocks" : "/components";
 
   return (
-    <aside className="w-64 shrink-0 border-r border-gray-200 bg-white hidden lg:block">
+    <aside className="w-64 shrink-0 border-r border-gray-200 bg-white h-full">
       <div className="p-4">
         <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
           {category === "blocks" ? "UI Blocks" : "UI Components"}

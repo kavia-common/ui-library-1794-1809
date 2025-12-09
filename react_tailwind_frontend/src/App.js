@@ -13,23 +13,29 @@ import HomePage from "./pages/HomePage";
 import ComponentsPage from "./pages/ComponentsPage";
 import BlocksPage from "./pages/BlocksPage";
 import DetailPage from "./pages/DetailPage";
+import CategorySidebar from "./components/CategorySidebar";
 
 /**
- * Determine if the sidebar should be shown for the current path.
- * Sidebar is hidden on "/" and shown on /components, /blocks and their detail routes.
+ * Determine which sidebar, if any, should be shown for the current path.
+ * - Hide on "/"
+ * - Show Components list on "/components"
+ * - Show Blocks list on "/blocks"
+ * - On detail routes, keep same category sidebar and highlight active item automatically via NavLink.
  */
-function useSidebarVisibility() {
+function useSidebarConfig() {
   const location = useLocation();
   const path = location.pathname || "/";
   const isHome = path === "/";
-  return { showSidebar: !isHome };
+  if (isHome) return { show: false, category: null };
+  const isBlocks = path.startsWith("/blocks");
+  return { show: true, category: isBlocks ? "blocks" : "components" };
 }
 
 // PUBLIC_INTERFACE
 function AppShell() {
   /** This internal component renders the layout with access to router hooks. */
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { showSidebar } = useSidebarVisibility();
+  const { show, category } = useSidebarConfig();
 
   // PUBLIC_INTERFACE
   const toggleSidebar = () => setSidebarOpen((s) => !s);
@@ -41,9 +47,7 @@ function AppShell() {
     "text-gray-600 hover:text-ocean-primary hover:bg-blue-50";
 
   // Close the sidebar whenever we are on a route where it should be hidden
-  if (!showSidebar && sidebarOpen) {
-    // Ensure mobile menu is closed on Home
-    // Avoid state update during render by scheduling microtask
+  if (!show && sidebarOpen) {
     queueMicrotask(() => setSidebarOpen(false));
   }
 
@@ -64,7 +68,7 @@ function AppShell() {
               </span>
             </div>
 
-            {/* Desktop nav */}
+            {/* Desktop nav (unchanged) */}
             <div className="hidden md:flex items-center gap-2">
               <NavLink
                 to="/"
@@ -102,11 +106,12 @@ function AppShell() {
               </a>
             </div>
 
-            {/* Mobile toggle: still visible on Home, but sidebar area will be hidden */}
+            {/* Mobile toggle */}
             <button
               onClick={toggleSidebar}
               className="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:bg-blue-50 hover:text-ocean-primary transition"
               aria-label="Toggle sidebar"
+              aria-expanded={show ? sidebarOpen : false}
             >
               <svg
                 className="h-6 w-6"
@@ -127,73 +132,20 @@ function AppShell() {
 
       {/* Content wrapper with optional sidebar */}
       <div className="flex flex-1 pt-16">
-        {/* Sidebar: render only when showSidebar is true */}
-        {showSidebar && (
-          <aside
+        {/* Sidebar: render only when show is true.
+            Use CategorySidebar to list either components or blocks from central data,
+            so it highlights the active item automatically on detail routes. */}
+        {show && (
+          <div
             className={`fixed md:sticky top-16 z-30 h-[calc(100vh-4rem)] w-72 shrink-0 overflow-y-auto bg-white border-r border-gray-200 transition-transform duration-300 ease-in-out md:translate-x-0 ${
               sidebarOpen ? "translate-x-0" : "-translate-x-full"
             } md:block`}
           >
-            <div className="p-4">
-              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
-                Categories
-              </h3>
-              <nav className="space-y-1">
-                <NavLink
-                  to="/"
-                  end
-                  className={({ isActive }) =>
-                    `flex items-center gap-2 px-3 py-2 rounded-lg transition ${
-                      isActive
-                        ? "bg-blue-50 text-ocean-primary"
-                        : "text-gray-700 hover:bg-blue-50 hover:text-ocean-primary"
-                    }`
-                  }
-                  onClick={() => setSidebarOpen(false)}
-                >
-                  <span className="h-2 w-2 rounded-full bg-ocean-primary"></span>
-                  Home
-                </NavLink>
-                <NavLink
-                  to="/components"
-                  className={({ isActive }) =>
-                    `flex items-center gap-2 px-3 py-2 rounded-lg transition ${
-                      isActive
-                        ? "bg-blue-50 text-ocean-primary"
-                        : "text-gray-700 hover:bg-blue-50 hover:text-ocean-primary"
-                    }`
-                  }
-                  onClick={() => setSidebarOpen(false)}
-                >
-                  <span className="h-2 w-2 rounded-full bg-ocean-primary"></span>
-                  Components
-                </NavLink>
-                <NavLink
-                  to="/blocks"
-                  className={({ isActive }) =>
-                    `flex items-center gap-2 px-3 py-2 rounded-lg transition ${
-                      isActive
-                        ? "bg-blue-50 text-ocean-primary"
-                        : "text-gray-700 hover:bg-blue-50 hover:text-ocean-primary"
-                    }`
-                  }
-                  onClick={() => setSidebarOpen(false)}
-                >
-                  <span className="h-2 w-2 rounded-full bg-ocean-secondary"></span>
-                  Blocks
-                </NavLink>
-              </nav>
-
-              <div className="mt-6">
-                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                  About
-                </h4>
-                <p className="text-sm text-gray-600">
-                  Sample UI library with live previews and code tabs. Built with React and Tailwind CSS.
-                </p>
-              </div>
-            </div>
-          </aside>
+            <CategorySidebar
+              category={category}
+              onNavigate={() => setSidebarOpen(false)}
+            />
+          </div>
         )}
 
         {/* Main content */}
