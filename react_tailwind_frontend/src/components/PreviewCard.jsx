@@ -2,17 +2,17 @@ import React, { useMemo, useState, useCallback } from "react";
 
 /**
  * PUBLIC_INTERFACE
- * PreviewCard shows a live preview area and a Tailwind Play–style snippet code area under it.
- * It maps existing `code` objects to Tailwind Play–ready tabs (HTML / JS / Config) and renders only
- * the code block controls matching the SnippetPlay implementation—without introducing any new preview panes or routes.
+ * PreviewCard with a top-right toggle to switch between live Preview and Code.
+ * - Defaults to 'Preview'
+ * - When 'Code' is active, shows Tailwind Play–style snippet panel with tabs and Copy
+ * - Removes always-visible code; only one view is shown at a time
  */
 const PreviewCard = ({ title, description, preview, code }) => {
-  // Build Tailwind Play–ready code tabs in-place. If only JSX is provided, convert it to HTML.
+  // Build Tailwind Play–ready code tabs. If only JSX is provided, convert to HTML-friendly class attr.
   const html = useMemo(() => {
     if (!code) return "";
     if (code.html || code.markup) return code.html || code.markup;
     if (code.jsx) {
-      // Minimal JSX -> HTML transform for className
       return code.jsx
         .replaceAll('className="', 'class="')
         .replaceAll("className='", "class='");
@@ -31,9 +31,13 @@ const PreviewCard = ({ title, description, preview, code }) => {
     return t.length ? t : [{ key: "html", label: "HTML" }];
   }, [html, js, config]);
 
+  // Toggle between "preview" and "code" (default to preview)
+  const [mode, setMode] = useState("preview");
+
+  // Current active code tab
   const [active, setActive] = useState(tabs[0]?.key || "html");
 
-  // Keep accessibility/keyboard focus behavior consistent with SnippetPlay's copy handling
+  // Copy-to-clipboard handling (preserve behavior)
   const [copied, setCopied] = useState(false);
   const copy = useCallback(async (text) => {
     try {
@@ -58,7 +62,7 @@ const PreviewCard = ({ title, description, preview, code }) => {
     [currentCode]
   );
 
-  // Simple syntax highlighting similar to SnippetPlay (same token classes)
+  // Minimal syntax highlighting aligned with SnippetPlay token classes
   const highlight = useCallback((codeText = "", lang = "html") => {
     if (!codeText) return "";
     const esc = codeText
@@ -101,9 +105,38 @@ const PreviewCard = ({ title, description, preview, code }) => {
   const highlighted = useMemo(() => highlight(currentCode, codeLang), [currentCode, codeLang, highlight]);
 
   const onCopy = useCallback(() => {
-    // Copy exactly current tab content; users can paste directly into Tailwind Play tabs.
+    // Copy exactly the active tab content
     return copy(currentCode || "");
   }, [currentCode, copy]);
+
+  // Toggle button UI
+  const Toggle = () => {
+    const isPreview = mode === "preview";
+    return (
+      <div className="inline-flex items-center rounded-md border border-gray-200 bg-white shadow-sm overflow-hidden">
+        <button
+          type="button"
+          onClick={() => setMode("preview")}
+          className={`px-3 py-1.5 text-xs font-medium transition ${
+            isPreview ? "bg-blue-50 text-ocean-primary" : "text-gray-600 hover:bg-gray-50"
+          }`}
+          aria-pressed={isPreview}
+        >
+          Preview
+        </button>
+        <button
+          type="button"
+          onClick={() => setMode("code")}
+          className={`px-3 py-1.5 text-xs font-medium transition ${
+            !isPreview ? "bg-blue-50 text-ocean-primary" : "text-gray-600 hover:bg-gray-50"
+          }`}
+          aria-pressed={!isPreview}
+        >
+          Code
+        </button>
+      </div>
+    );
+  };
 
   return (
     <section className="bg-white rounded-xl shadow-card border border-gray-200 overflow-hidden">
@@ -113,82 +146,86 @@ const PreviewCard = ({ title, description, preview, code }) => {
             <h3 className="text-base sm:text-lg font-semibold text-gray-900">{title}</h3>
             {description && <p className="text-sm text-gray-600 mt-1">{description}</p>}
           </div>
+
+          {/* Top-right toggle */}
+          <Toggle />
         </div>
 
+        {/* Conditional content area */}
         <div className="mt-4">
-          <div className="rounded-lg border border-dashed border-gray-300 p-4 bg-ocean-gradient">
-            {preview}
-          </div>
-        </div>
-      </div>
-
-      {/* Tailwind Play–style code block only (no extra preview added) */}
-      <div className="border-t border-gray-200">
-        <div className="rounded-none overflow-hidden border-t border-slate-800/70" style={{ background: "var(--bg-canvas, #0f131a)" }}>
-          {/* Header with tabs and copy; mirrors SnippetPlay controls */}
-          <div
-            className="flex items-center justify-between px-3 md:px-4 h-11 border-b border-slate-800/70"
-            role="tablist"
-            aria-label={`${title} snippet tabs`}
-          >
-            <div className="flex items-center gap-2 md:gap-3">
-              {tabs.map((t) => {
-                const activeState = active === t.key;
-                return (
-                  <button
-                    key={t.key}
-                    id={`tab-${t.key}`}
-                    role="tab"
-                    aria-selected={activeState}
-                    aria-controls={`tab-${t.key}-panel`}
-                    data-active={activeState}
-                    onClick={() => setActive(t.key)}
-                    className="h-10 px-3 text-[12px] md:text-xs tracking-wider uppercase font-medium 
-                    text-slate-400 hover:text-slate-200 transition
-                    data-[active=true]:text-sky-300
-                    data-[active=true]:border-b-2 data-[active=true]:border-sky-400"
-                  >
-                    {t.label}
-                  </button>
-                );
-              })}
-            </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                onClick={onCopy}
-                aria-label="Copy code"
-                className="inline-flex items-center gap-1.5 text-slate-400 hover:text-slate-200 px-2.5 py-1.5 rounded-md ring-1 ring-slate-700/50 hover:ring-slate-600 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/60"
+          {mode === "preview" ? (
+            <div className="rounded-lg border border-dashed border-gray-300 p-4 bg-ocean-gradient">{preview}</div>
+          ) : (
+            <div
+              className="rounded-lg overflow-hidden border border-slate-800/70"
+              style={{ background: "var(--bg-canvas, #0f131a)" }}
+            >
+              {/* Header with tabs and copy; mirrors SnippetPlay controls */}
+              <div
+                className="flex items-center justify-between px-3 md:px-4 h-11 border-b border-slate-800/70"
+                role="tablist"
+                aria-label={`${title} snippet tabs`}
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="shrink-0">
-                  <path d="M8 8h12v12H8z" stroke="currentColor" strokeWidth="1.5" />
-                  <path d="M4 4h12v12H4z" stroke="currentColor" strokeWidth="1.5" />
-                </svg>
-                <span className="hidden sm:inline">{copied ? "Copied" : "Copy"}</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Code area with gutter and syntax colors */}
-          <div className="relative overflow-auto">
-            <div className="grid" role="tabpanel" id={`tab-${active}-panel`} aria-labelledby={`tab-${active}`}>
-              <pre className="relative text-[13px] md:text-[13.5px] leading-6 p-3 md:p-4 lg:p-5 m-0 code-font">
-                <div className="flex">
-                  {/* Gutter */}
-                  <div className="select-none text-right pr-3 mr-3 w-10 border-r border-slate-800/60 text-slate-600">
-                    {codeLines.map((_, i) => (
-                      <div key={i}>{i + 1}</div>
-                    ))}
-                  </div>
-                  {/* Code */}
-                  <code
-                    className="block min-w-0 whitespace-pre text-slate-300"
-                    dangerouslySetInnerHTML={{ __html: highlighted }}
-                  />
+                <div className="flex items-center gap-2 md:gap-3">
+                  {tabs.map((t) => {
+                    const activeState = active === t.key;
+                    return (
+                      <button
+                        key={t.key}
+                        id={`tab-${t.key}`}
+                        role="tab"
+                        aria-selected={activeState}
+                        aria-controls={`tab-${t.key}-panel`}
+                        data-active={activeState}
+                        onClick={() => setActive(t.key)}
+                        className="h-10 px-3 text-[12px] md:text-xs tracking-wider uppercase font-medium 
+                        text-slate-400 hover:text-slate-200 transition
+                        data-[active=true]:text-sky-300
+                        data-[active=true]:border-b-2 data-[active=true]:border-sky-400"
+                      >
+                        {t.label}
+                      </button>
+                    );
+                  })}
                 </div>
-              </pre>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={onCopy}
+                    aria-label="Copy code"
+                    className="inline-flex items-center gap-1.5 text-slate-400 hover:text-slate-200 px-2.5 py-1.5 rounded-md ring-1 ring-slate-700/50 hover:ring-slate-600 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/60"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="shrink-0">
+                      <path d="M8 8h12v12H8z" stroke="currentColor" strokeWidth="1.5" />
+                      <path d="M4 4h12v12H4z" stroke="currentColor" strokeWidth="1.5" />
+                    </svg>
+                    <span className="hidden sm:inline">{copied ? "Copied" : "Copy"}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Code area */}
+              <div className="relative overflow-auto">
+                <div className="grid" role="tabpanel" id={`tab-${active}-panel`} aria-labelledby={`tab-${active}`}>
+                  <pre className="relative text-[13px] md:text-[13.5px] leading-6 p-3 md:p-4 lg:p-5 m-0 code-font">
+                    <div className="flex">
+                      {/* Gutter */}
+                      <div className="select-none text-right pr-3 mr-3 w-10 border-r border-slate-800/60 text-slate-600">
+                        {codeLines.map((_, i) => (
+                          <div key={i}>{i + 1}</div>
+                        ))}
+                      </div>
+                      {/* Code */}
+                      <code
+                        className="block min-w-0 whitespace-pre text-slate-300"
+                        dangerouslySetInnerHTML={{ __html: highlighted }}
+                      />
+                    </div>
+                  </pre>
+                </div>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
