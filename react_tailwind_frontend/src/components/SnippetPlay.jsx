@@ -135,17 +135,44 @@ function buildCopyHtml({ html = "", js = "", config = "", copyMode = "fragment" 
  */
 function useCopyToClipboard() {
   const [copied, setCopied] = useState(false);
+  const [error, setError] = useState("");
   const copy = useCallback(async (text) => {
+    const toCopy = text ?? "";
+    setError("");
     try {
-      await navigator.clipboard.writeText(text ?? "");
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1200);
-      return true;
-    } catch {
-      return false;
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+        await navigator.clipboard.writeText(toCopy);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1200);
+        return true;
+      }
+      throw new Error("Navigator clipboard not available");
+    } catch (e1) {
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = toCopy;
+        ta.style.position = "fixed";
+        ta.style.top = "-1000px";
+        ta.style.left = "-1000px";
+        ta.setAttribute("readonly", "true");
+        document.body.appendChild(ta);
+        ta.select();
+        ta.setSelectionRange(0, ta.value.length);
+        const ok = document.execCommand("copy");
+        document.body.removeChild(ta);
+        if (!ok) {
+          throw new Error("execCommand copy failed");
+        }
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1200);
+        return true;
+      } catch (e2) {
+        setError("Copy failed");
+        return false;
+      }
     }
   }, []);
-  return { copied, copy };
+  return { copied, error, copy };
 }
 
 /**
@@ -226,7 +253,7 @@ const SnippetPlay = ({
     }
   }, [tabs, active]);
 
-  const { copied, copy } = useCopyToClipboard();
+  const { copied, error, copy } = useCopyToClipboard();
 
   const currentCode = useMemo(() => {
     if (active === "html") return html;
@@ -291,7 +318,7 @@ const SnippetPlay = ({
                   <path d="M8 8h12v12H8z" stroke="currentColor" strokeWidth="1.5" />
                   <path d="M4 4h12v12H4z" stroke="currentColor" strokeWidth="1.5" />
                 </svg>
-                <span className="hidden sm:inline">{copied ? "Copied" : "Copy"}</span>
+                <span className="hidden sm:inline">{copied ? "Copied" : error ? "Copy failed" : "Copy"}</span>
               </button>
             </div>
           </div>

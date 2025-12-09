@@ -37,16 +37,46 @@ const PreviewCard = ({ title, description, preview, code }) => {
   // Current active code tab
   const [active, setActive] = useState(tabs[0]?.key || "html");
 
-  // Copy-to-clipboard handling (preserve behavior)
+  // Copy-to-clipboard handling with robust fallback and UI feedback
   const [copied, setCopied] = useState(false);
+  const [copyError, setCopyError] = useState("");
   const copy = useCallback(async (text) => {
+    const toCopy = text ?? "";
+    setCopyError("");
+    // Try modern API first
     try {
-      await navigator.clipboard.writeText(text ?? "");
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1200);
-      return true;
-    } catch {
-      return false;
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+        await navigator.clipboard.writeText(toCopy);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1200);
+        return true;
+      }
+      throw new Error("Navigator clipboard not available");
+    } catch (e1) {
+      // Fallback: temporary textarea + execCommand
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = toCopy;
+        // Avoid scrolling to bottom on iOS
+        ta.style.position = "fixed";
+        ta.style.top = "-1000px";
+        ta.style.left = "-1000px";
+        ta.setAttribute("readonly", "true");
+        document.body.appendChild(ta);
+        ta.select();
+        ta.setSelectionRange(0, ta.value.length);
+        const ok = document.execCommand("copy");
+        document.body.removeChild(ta);
+        if (!ok) {
+          throw new Error("execCommand copy failed");
+        }
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1200);
+        return true;
+      } catch (e2) {
+        setCopyError("Copy failed");
+        return false;
+      }
     }
   }, []);
 
@@ -105,7 +135,7 @@ const PreviewCard = ({ title, description, preview, code }) => {
   const highlighted = useMemo(() => highlight(currentCode, codeLang), [currentCode, codeLang, highlight]);
 
   const onCopy = useCallback(() => {
-    // Copy exactly the active tab content
+    // Copy exactly the active tab content without mutation
     return copy(currentCode || "");
   }, [currentCode, copy]);
 
@@ -195,11 +225,11 @@ const PreviewCard = ({ title, description, preview, code }) => {
                     aria-label="Copy code"
                     className="inline-flex items-center gap-1.5 text-slate-400 hover:text-slate-200 px-2.5 py-1.5 rounded-md ring-1 ring-slate-700/50 hover:ring-slate-600 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/60"
                   >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="shrink-0">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="shrink-0" aria-hidden="true">
                       <path d="M8 8h12v12H8z" stroke="currentColor" strokeWidth="1.5" />
                       <path d="M4 4h12v12H4z" stroke="currentColor" strokeWidth="1.5" />
                     </svg>
-                    <span className="hidden sm:inline">{copied ? "Copied" : "Copy"}</span>
+                    <span className="hidden sm:inline">{copied ? "Copied" : copyError ? "Copy failed" : "Copy"}</span>
                   </button>
                 </div>
               </div>
